@@ -1,0 +1,251 @@
+.button {
+  cursor: pointer;
+  height: 50px;
+  padding: 1em 2em;
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+  align-items: center;
+
+  border: none;
+  border: 2px solid #605cff;
+  outline: none;
+  background-color: #605cff;
+  border-radius: 10px;
+
+  color: #fff;
+  font-family: 'DM Sans';
+  font-weight: 500;
+  font-size: 16px;
+
+  transition: all 0.1s ease-in;
+  user-select: none;
+}
+
+.button__text {
+}
+.button__offset__left {
+  flex-direction: row;
+}
+.button__offset__right {
+  flex-direction: row-reverse;
+}
+.button:hover {
+  background-color: #4742fd;
+  border-color: #4742fd;
+}
+.button:focus {
+  background-color: #605cff;
+  border-color: #302aff;
+}
+.button:active {
+  background-color: #302aff;
+  border-color: #302aff;
+}
+
+.button svg {
+  height: 25px;
+  width: 25px;
+  fill: #fff;
+  transition: all 0.1s ease-in;
+}
+
+.button span {
+  display: grid;
+  place-items: center;
+}
+.loading {
+  animation: loadingAnimation 1s ease-in-out infinite;
+}
+@keyframes loadingAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.button__small {
+  height: 30px;
+  font-size: 12px;
+}
+.button__medium {
+  height: 40px;
+  font-size: 14px;
+}
+.button__big {
+  height: 50px;
+  font-size: 16px;
+}
+
+.button__disabled {
+  pointer-events: none;
+  background-color: #33315f;
+  border-color: #33315f;
+  color: #605cff;
+}
+.button__disabled svg {
+  fill: #605cff;
+}
+
+/* secondary */
+.button__disabled.button__secondary > * {
+  border-color: #33315f;
+  color: #33315f;
+  fill: #33315f;
+}
+.button__secondary {
+  background-color: transparent !important;
+  color: #5a57ee;
+}
+.button__secondary svg {
+  fill: #5a57ee;
+}
+.button__secondary:hover {
+  color: #4742fd;
+  border-color: #4742fd;
+}
+.button__secondary:hover svg {
+  fill: #4742fd;
+}
+.button__secondary:focus {
+  color: #5a57ee;
+  border-color: #302aff;
+}
+.button__secondary:focus svg {
+  fill: #302aff;
+}
+.button__secondary:active {
+  color: #5a57ee;
+  border-color: #4742fd;
+}
+.button__secondary:active svg {
+  fill: #5a57ee;
+}
+
+/* text button */
+.button__disabled.button__text > * {
+  color: #33315f;
+  fill: #33315f;
+}
+.button__text {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: #5a57ee;
+  padding: 0.5em !important;
+  height: unset;
+}
+.button__text svg {
+  fill: #5a57ee;
+}
+.button__text:hover {
+  color: #4742fd;
+}
+.button__text:hover svg {
+  fill: #4742fd;
+}
+.button__text:focus {
+  color: #5655d9 !important;
+  background-color: #364153 !important;
+}
+.button__text:focus svg {
+  fill: #5655d9;
+}
+.button__text:active {
+  background-color: transparent !important;
+  color: #5a57ee;
+}
+.button__text:active svg {
+  fill: #5a57ee;
+}
+
+/* IconButton */
+.iconButton {
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+
+  padding: 12px;
+
+  border: none;
+  border: 2px solid transparent;
+  outline: none;
+  background-color: #605cff;
+  border-radius: 10px;
+
+  transition: all 0.1s ease-in;
+}
+.iconButton:hover {
+  background-color: #4742fd;
+}
+.iconButton:focus {
+  background-color: #605cff;
+  border-color: #4742fd;
+}
+.iconButton:active {
+  background-color: #302bff;
+  border-color: transparent;
+}
+.iconButton svg {
+  width: 28px;
+  height: 28px;
+  fill: #fff;
+  transition: all 0.1s ease-in;
+}
+.iconButton__disabled {
+  pointer-events: none;
+  background-color: #33315f;
+}
+.iconButton__disabled svg {
+  fill: #605cff;
+}
+
+.iconButton__small {
+  padding: 8px;
+}
+.iconButton__small svg {
+  width: 20px;
+  height: 20px;
+}
+.iconButton__medium {
+  padding: 10px;
+}
+.iconButton__medium svg {
+  width: 24px;
+  height: 24px;
+}
+.iconButton__secondary {
+  background-color: transparent !important;
+  border-color: #605cff;
+}
+.iconButton__secondary svg {
+  fill: #605cff;
+}
+
+.iconButton__secondary:hover {
+  border-color: #4742fd;
+}
+.iconButton__secondary:hover svg {
+  fill: #4742fd;
+}
+.iconButton__secondary:focus {
+  border-color: #4742fd;
+  box-shadow: inset 0 0 0 1px #605cff;
+}
+.iconButton__secondary:focus svg {
+  fill: #4742fd;
+}
+.iconButton__secondary:active {
+  border-color: #302bff;
+  box-shadow: unset;
+}
+.iconButton__secondary:active svg {
+  fill: #302bff;
+}
+.iconButton__secondary.iconButton__disabled {
+  border-color: #33315f;
+}
+.iconButton__secondary.iconButton__disabled svg {
+  fill: #33315f;
+}

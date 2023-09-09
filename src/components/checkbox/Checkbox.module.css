@@ -1,0 +1,58 @@
+.container {
+  width: 26px;
+  height: 26px;
+  position: relative;
+
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.container input {
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+
+  appearance: none;
+  outline: none;
+}
+.container svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+
+  border: 2px solid #747481;
+
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  transition: all 0.2s linear;
+}
+
+.container svg path {
+  stroke: white;
+}
+.container input:hover ~ svg {
+  border-color: #3d39ca;
+}
+
+.container input:active ~ svg {
+  border-color: #2c27cb;
+}
+
+.container input:checked ~ svg {
+  stroke-dashoffset: 0;
+  background-color: #6254ff;
+  border-color: #6254ff;
+}
+.container input:focus ~ svg {
+  border-color: #4742fd;
+}
+.container input:disabled ~ svg {
+  border-color: #2e2d53;
+}
