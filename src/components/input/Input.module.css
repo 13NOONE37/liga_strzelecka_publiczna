@@ -1,0 +1,134 @@
+.box {
+  display: grid;
+  grid-template-rows: auto auto 50px;
+}
+.label {
+  color: #fff;
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 0.5em;
+}
+.input--box {
+  grid-row-start: 2;
+  position: relative;
+
+  height: 50px;
+
+  background-color: #222131;
+  border-radius: 10px;
+  border: 1px solid transparent;
+
+  transition: all 0.1s ease-in;
+}
+.input--box:hover,
+.input--box:has(.input:focus) {
+  border-color: #605cff;
+}
+
+.input--box__warning {
+  border-color: hsl(63, 67%, 65%) !important;
+}
+.input--box__error,
+.input--box__error__noicon {
+  border-color: #e26a6d !important;
+}
+
+.input--icon {
+  position: absolute;
+  /* z-index: 2; */
+}
+.input--icon > * {
+  width: 50px;
+  height: 50px;
+  border-radius: 0 10px 10px 0;
+}
+
+.input--box__offset__left .input--icon {
+  left: 0;
+}
+.input--box__offset__right .input--icon {
+  right: 0;
+}
+
+.input {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 100%;
+  padding: 8px 30px;
+  padding-top: 23px;
+
+  background-color: transparent;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--neutral);
+}
+.input--box__offset__left .input {
+  padding-left: 50px;
+}
+.input--box__offset__right .input {
+  padding-right: 50px;
+}
+
+.input--placeholder {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  font-weight: 500;
+  font-size: 16px;
+  opacity: 0.9;
+  transition: all 0.1s ease-in;
+}
+.input--box__offset__left .input--placeholder {
+  left: 50px;
+}
+.input--box__active .input--placeholder {
+  top: 14px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.status {
+  grid-row-start: 3;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 8px;
+  padding-top: 8px;
+}
+.status svg {
+  width: 20px;
+  height: 20px;
+}
+.status__success {
+  fill: #30d19c;
+  color: #30d19c;
+}
+.status__warning {
+  fill: hsl(63, 67%, 65%);
+  color: hsl(63, 67%, 65%);
+}
+.status__error {
+  fill: #e26a6d;
+  color: #e26a6d;
+}
+.status__error__noicon {
+  fill: transparent;
+}
+.input--box__disabled {
+  border-color: transparent !important;
+  pointer-events: none;
+}
+
+.input--box__disabled .input--placeholder {
+  opacity: 0.5;
+}
+.input--box__disabled .input--icon {
+  opacity: 0.5;
+}

@@ -1,32 +1,3 @@
 .box {
   color: white;
 }
-.box__big {
-}
-.box__medium {
-}
-.box__small {
-}
-.box--select {
-}
-.box--select-container {
-  background-color: aqua;
-}
-.box--select__control {
-  background-color: yellow;
-}
-.box--select__value-container {
-  background-color: green;
-}
-.box--select__indicators {
-  background-color: red;
-}
-.box--select__menu {
-  background-color: brown;
-}
-.box--select__menu-list {
-  background-color: blue;
-}
-.box--select__option {
-  background-color: violet;
-}

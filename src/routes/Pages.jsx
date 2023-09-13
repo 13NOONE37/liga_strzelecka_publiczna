@@ -1,23 +1,24 @@
-import Contester from "./pages/Contester/Contester";
-import General from "./pages/General/General";
-import Rounds from "./pages/Rounds/Rounds";
+import Contester from './pages/Contester/Contester';
+import General from './pages/General/General';
+import Rounds from './pages/Rounds/Rounds';
+import Start from './pages/Start/Start';
 
-const pages= [
-    {
-        path:'/',
-        element:<General/>
-    },
-    {
-        path:'/generalka',
-        element:<General/>
-    },
-    {
-        path:'/rundy',
-        element:<Rounds/>
-    },
-    {
-        path:'/zawodnik',
-        element:<Contester/>
-    }
-]
-export default pages
+const pages = [
+  {
+    path: '/',
+    element: <Start />,
+  },
+  {
+    path: '/generalka',
+    element: <General />,
+  },
+  {
+    path: '/rundy',
+    element: <Rounds />,
+  },
+  {
+    path: '/profile',
+    element: <Contester />,
+  },
+];
+export default pages;
