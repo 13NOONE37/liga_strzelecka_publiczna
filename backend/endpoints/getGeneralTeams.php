@@ -20,7 +20,7 @@ function getGeneralTeams($conn)
            CASE WHEN contesters.shoot_9 = 10 THEN 1 ELSE 0 END +
            CASE WHEN contesters.shoot_10 = 10 THEN 1 ELSE 0 END) AS tens
             FROM schools
-            INNER JOIN shooters ON schools.school_id = shooters.school_id
+            INNER JOIN shooters 
             INNER JOIN teams ON schools.school_id = teams.school_id
             INNER JOIN contests ON teams.contest_id = contests.contest_id
             INNER JOIN contesters ON teams.team_id = contesters.team_id AND shooters.shooter_id = contesters.shooter_id

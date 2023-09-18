@@ -5,7 +5,7 @@ function getGeneralWomen($conn)
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
 
-        $query = "SELECT shooters.shooter_id, shooters.firstName, shooters.secondName,
+        $query = "SELECT shooters.shooter_id, shooters.firstName, shooters.secondName, schools.name,
         SUM(contesters.shoot_1 + contesters.shoot_2 + contesters.shoot_3 + contesters.shoot_4 +
             contesters.shoot_5 + contesters.shoot_6 + contesters.shoot_7 + contesters.shoot_8 +
             contesters.shoot_9 + contesters.shoot_10) AS result,
@@ -20,7 +20,7 @@ function getGeneralWomen($conn)
             CASE WHEN contesters.shoot_9 = 10 THEN 1 ELSE 0 END +
             CASE WHEN contesters.shoot_10 = 10 THEN 1 ELSE 0 END) AS tens
             FROM schools
-            INNER JOIN shooters ON schools.school_id = shooters.school_id
+            INNER JOIN shooters 
             INNER JOIN teams ON schools.school_id = teams.school_id
             INNER JOIN contests ON teams.contest_id = contests.contest_id
             INNER JOIN contesters ON teams.team_id = contesters.team_id AND shooters.shooter_id = contesters.shooter_id

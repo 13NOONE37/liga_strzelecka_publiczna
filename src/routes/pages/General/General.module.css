@@ -1,14 +1,16 @@
 .container {
-  width: 100%;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: center;
   padding: 1rem;
+  gap: 1rem;
 }
 .searchBar {
   background-color: #39394b;
-  width: 100%;
+  max-width: 100%;
+  width: 900px;
   border-radius: 10px 10px 0 0;
   padding: 1rem;
 
@@ -24,16 +26,101 @@
 .searchBar .box {
   width: 100%;
 }
+
+.resultContainer {
+  border: 2px solid #39394b;
+  background-color: #39394b;
+  overflow-x: auto;
+  max-width: 100%;
+  width: 900px;
+  padding: 1rem;
+
+  font-size: 14px;
+  cursor: grab;
+}
+.resultContainer__disabled {
+  cursor: default;
+}
+.resultContainer--nav {
+  display: grid;
+  place-items: center;
+
+  color: #fff;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  letter-spacing: 0.2px;
+}
+
+.resultContainer--row {
+  display: grid;
+  place-items: center;
+
+  padding: 0.5rem 0;
+
+  color: #fff;
+  font-weight: 400;
+  border-radius: 10px;
+}
+.resultContainer__team .resultContainer--row {
+  width: 480px;
+  grid-template-columns: 70px 1fr 70px 70px 70px;
+}
+.resultContainer__team .resultContainer--nav {
+  width: 480px;
+  grid-template-columns: 70px 1fr 70px 70px 70px;
+}
+.resultContainer__individual .resultContainer--row {
+  width: 620px;
+  grid-template-columns: 70px 1fr 1fr 70px 70px 70px;
+}
+.resultContainer__individual .resultContainer--nav {
+  width: 620px;
+  grid-template-columns: 70px 1fr 1fr 70px 70px 70px;
+}
+
+.name,
+.schoolName {
+  place-self: center;
+  text-align: center;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.resultContainer--row:nth-child(even) {
+  background-color: #222131;
+}
+@media (min-width: 547px) {
+  .resultContainer__team {
+    border-radius: 0 0 10px 10px;
+  }
+  .resultContainer__team .resultContainer--row {
+    width: 100%;
+  }
+  .resultContainer__team .resultContainer--nav {
+    width: 100%;
+  }
+}
+@media (min-width: 719px) {
+  .resultContainer__individual {
+    border-radius: 0 0 10px 10px;
+  }
+  .resultContainer__individual .resultContainer--row {
+    width: 100%;
+  }
+  .resultContainer__individual .resultContainer--nav {
+    width: 100%;
+  }
+}
 @media (min-width: 608px) {
   .container {
     padding: 2rem;
   }
   .searchBar {
-    width: unset;
-    max-width: 100%;
-    grid-template-columns: 200px 260px;
+    grid-template-columns: 220px 1fr;
     grid-template-rows: auto auto;
   }
+
   .showButton {
     grid-area: 2 / 1 / 2 / 3;
     width: 100% !important;
@@ -41,8 +128,24 @@
 }
 @media (min-width: 760px) {
   .searchBar {
-    grid-template-columns: 200px 260px 140px;
+    grid-template-columns: 200px 1fr 140px;
     place-items: end center;
+  }
+
+  .resultContainer {
+    font-size: 16px;
+  }
+  .resultContainer__team .resultContainer--row {
+    grid-template-columns: 90px 1fr 90px 90px 90px;
+  }
+  .resultContainer__team .resultContainer--nav {
+    grid-template-columns: 90px 1fr 90px 90px 90px;
+  }
+  .resultContainer__individual .resultContainer--row {
+    grid-template-columns: 90px 1fr 1fr 90px 90px 90px;
+  }
+  .resultContainer__individual .resultContainer--nav {
+    grid-template-columns: 90px 1fr 1fr 90px 90px 90px;
   }
   .searchBar > * {
     width: 100%;
@@ -50,4 +153,10 @@
   .showButton {
     grid-area: unset;
   }
+}
+
+.emptyState {
+  text-align: center;
+  font-size: 18px;
+  color: #cfd9e0;
 }

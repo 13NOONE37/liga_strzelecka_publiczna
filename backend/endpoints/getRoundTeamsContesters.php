@@ -4,7 +4,7 @@ function getRoundTeamsContesters($conn)
     if (isset($_POST['contest_id'])) {
         $contest_id = $_POST['contest_id'];
 
-        $query = "SELECT shooters.firstName, shooters.secondName, teams.team_id
+        $query = "SELECT shooters.shooter_id, shooters.firstName, shooters.secondName, teams.team_id
         FROM shooters
         INNER JOIN contesters ON shooters.shooter_id = contesters.shooter_id
         INNER JOIN teams ON contesters.team_id = teams.team_id

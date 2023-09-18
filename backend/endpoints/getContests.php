@@ -1,7 +1,7 @@
 <?php
 function getContests($conn)
 {
-    $stmt = $conn->prepare("SELECT contests.contest_id, contests.date, schools.name FROM contests INNER JOIN schools ON contests.location = schools.school_id ");
+    $stmt = $conn->prepare("SELECT contests.*,  schools.name FROM contests INNER JOIN schools ON contests.location = schools.school_id ");
     $stmt->execute();
     $result = $stmt->get_result();
 

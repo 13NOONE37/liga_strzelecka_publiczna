@@ -16,9 +16,11 @@ function getRoundWomen($conn)
                 contesters.shoot_9,
                 contesters.shoot_10,
                 shooters.firstName,
-                shooters.secondName
+                shooters.secondName,
+                shooters.shooter_id,
+                schools.name
             FROM schools
-            INNER JOIN shooters ON schools.school_id = shooters.school_id
+            INNER JOIN shooters 
             INNER JOIN teams ON schools.school_id = teams.school_id
             INNER JOIN contests ON teams.contest_id = contests.contest_id
             INNER JOIN contesters ON teams.team_id = contesters.team_id AND shooters.shooter_id = contesters.shooter_id

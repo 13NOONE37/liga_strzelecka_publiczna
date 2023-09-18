@@ -18,14 +18,14 @@ function getRoundTeamsResult($conn)
             CASE WHEN contesters.shoot_8 = 10 THEN 1 ELSE 0 END +
             CASE WHEN contesters.shoot_9 = 10 THEN 1 ELSE 0 END +
             CASE WHEN contesters.shoot_10 = 10 THEN 1 ELSE 0 END) AS tens
- FROM schools
- INNER JOIN shooters ON schools.school_id = shooters.school_id
- INNER JOIN teams ON schools.school_id = teams.school_id
- INNER JOIN contests ON teams.contest_id = contests.contest_id
- INNER JOIN contesters ON teams.team_id = contesters.team_id AND shooters.shooter_id = contesters.shooter_id
- WHERE contests.contest_id = ? AND contesters.isInTeam = TRUE
- GROUP BY  teams.school_id
- ORDER BY Result DESC;";
+            FROM schools
+            INNER JOIN shooters
+            INNER JOIN teams ON schools.school_id = teams.school_id
+            INNER JOIN contests ON teams.contest_id = contests.contest_id
+            INNER JOIN contesters ON teams.team_id = contesters.team_id AND shooters.shooter_id = contesters.shooter_id
+            WHERE contests.contest_id = ? AND contesters.isInTeam = TRUE
+            GROUP BY  teams.school_id
+            ORDER BY Result DESC;";
 
         $stmt = mysqli_prepare($conn, $query);
         $stmt->bind_param('s', $contest_id);

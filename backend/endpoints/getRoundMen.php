@@ -5,25 +5,27 @@ function getRoundMen($conn)
         $contest_id = $_POST['contest_id'];
 
         $query = "SELECT
-                contesters.shoot_1,
-                contesters.shoot_2,
-                contesters.shoot_3,
-                contesters.shoot_4,
-                contesters.shoot_5,
-                contesters.shoot_6,
-                contesters.shoot_7,
-                contesters.shoot_8,
-                contesters.shoot_9,
-                contesters.shoot_10,
-                shooters.firstName,
-                shooters.secondName
-            FROM schools
-            INNER JOIN shooters ON schools.school_id = shooters.school_id
-            INNER JOIN teams ON schools.school_id = teams.school_id
-            INNER JOIN contests ON teams.contest_id = contests.contest_id
-            INNER JOIN contesters ON teams.team_id = contesters.team_id AND shooters.shooter_id = contesters.shooter_id
-            WHERE shooters.isMan = TRUE AND contests.contest_id = ?
-            GROUP BY contesters.shooter_id;";
+        contesters.shoot_1,
+        contesters.shoot_2,
+        contesters.shoot_3,
+        contesters.shoot_4,
+        contesters.shoot_5,
+        contesters.shoot_6,
+        contesters.shoot_7,
+        contesters.shoot_8,
+        contesters.shoot_9,
+        contesters.shoot_10,
+        shooters.firstName,
+        shooters.secondName,
+        shooters.shooter_id,
+        schools.name
+    FROM schools
+    INNER JOIN shooters 
+    INNER JOIN teams ON schools.school_id = teams.school_id
+    INNER JOIN contests ON teams.contest_id = contests.contest_id
+    INNER JOIN contesters ON teams.team_id = contesters.team_id AND shooters.shooter_id = contesters.shooter_id
+    WHERE shooters.isMan = TRUE AND contests.contest_id = ?
+    GROUP BY contesters.shooter_id;";
 
         $stmt = mysqli_prepare($conn, $query);
         $stmt->bind_param('s', $contest_id);

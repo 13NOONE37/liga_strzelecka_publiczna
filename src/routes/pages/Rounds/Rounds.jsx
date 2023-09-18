@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useReducer } from 'react';
+import cx from 'classnames';
 import styles from './Rounds.module.css';
 import SelectWithHeading from '../../../components/select/SelectWithHeading';
 import Select from '../../../components/select/Select';
@@ -6,10 +7,11 @@ import DefaultButton from '../../../components/button/Button';
 import AppContext from '../../../store/AppContext';
 import fetchData from '../../../utils/fetchData';
 import {
-  MAN_CLASSIFY,
-  WOMAN_CLASSIFY,
+  MEN_CLASSIFY,
+  WOMEN_CLASSIFY,
   TEAM_CLASSIFY,
 } from '../../../enums/ClassEnum';
+import ScrollContainer from 'react-indiana-drag-scroll';
 
 export default function Rounds() {
   const { seasons, contests } = useContext(AppContext);
@@ -22,8 +24,133 @@ export default function Rounds() {
       currentSeason: null,
       isLoading: false,
       canBeRefetched: false,
+      data: null,
     },
   );
+  const sortTeam = (data) => {
+    const { first_place_team_id, second_place_team_id, third_place_team_id } =
+      contests.find((i) => i.contest_id === roundsState.currentContest?.value);
+
+    data.sort((a, b) => {
+      // Check if the current item is one of the specified IDs
+      if (a.school_id === first_place_team_id) return -1; // a comes first
+      if (b.school_id === first_place_team_id) return 1; // b comes first
+      if (a.school_id === second_place_team_id) return -1;
+      if (b.school_id === second_place_team_id) return 1;
+      if (a.school_id === third_place_team_id) return -1;
+      if (b.school_id === third_place_team_id) return 1;
+
+      // If none of the special cases, sort by 'result' in descending order
+      return b.result - a.result;
+    });
+  };
+  const sortWomen = (data) => {
+    const {
+      woman_first_place_shooter_id,
+      woman_second_place_shooter_id,
+      woman_third_place_shooter_id,
+    } = contests.find(
+      (i) => i.contest_id === roundsState.currentContest?.value,
+    );
+
+    data.sort((a, b) => {
+      // Check if the current item is one of the specified IDs
+      if (a.shooter_id === woman_first_place_shooter_id) return -1; // a comes first
+      if (b.shooter_id === woman_first_place_shooter_id) return 1; // b comes first
+      if (a.shooter_id === woman_second_place_shooter_id) return -1;
+      if (b.shooter_id === woman_second_place_shooter_id) return 1;
+      if (a.shooter_id === woman_third_place_shooter_id) return -1;
+      if (b.shooter_id === woman_third_place_shooter_id) return 1;
+
+      // If none of the special cases, sort by 'result' in descending order
+      return b.result - a.result;
+    });
+  };
+  const sortMen = (data) => {
+    const {
+      man_first_place_shooter_id,
+      man_second_place_shooter_id,
+      man_third_place_shooter_id,
+    } = contests.find(
+      (i) => i.contest_id === roundsState.currentContest?.value,
+    );
+
+    data.sort((a, b) => {
+      // Check if the current item is one of the specified IDs
+      if (a.shooter_id === man_first_place_shooter_id) return -1; // a comes first
+      if (b.shooter_id === man_first_place_shooter_id) return 1; // b comes first
+      if (a.shooter_id === man_second_place_shooter_id) return -1;
+      if (b.shooter_id === man_second_place_shooter_id) return 1;
+      if (a.shooter_id === man_third_place_shooter_id) return -1;
+      if (b.shooter_id === man_third_place_shooter_id) return 1;
+
+      // If none of the special cases, sort by 'result' in descending order
+      return b.result - a.result;
+    });
+  };
+  const calcResult = (element) => {
+    let result = 0;
+    let tens = 0;
+
+    for (let i = 1; i <= 10; i++) {
+      const shootKey = `shoot_${i}`;
+      if (typeof element[shootKey] === 'number') {
+        if (element[shootKey] === 10) {
+          tens++;
+        }
+        result += element[shootKey];
+      }
+    }
+
+    return { result, tens };
+  };
+  const calcLosses = (data) => {
+    return data.map((element, index) => {
+      if (index === 0) {
+        return 0;
+      } else {
+        const prevResult = parseInt(data[index - 1].result);
+        const currentResult = parseInt(element.result, 10);
+        return prevResult - currentResult;
+      }
+    });
+  };
+
+  const calcTeams = (data, contesters) => {
+    //TODO: apply contesters to drop down them next
+    sortTeam(data);
+    const losses = calcLosses(data);
+
+    return data.map((element, index) => ({
+      ...element,
+      place: index + 1,
+      loss: losses[index],
+    }));
+  };
+  const calcIndividual = (data, classify) => {
+    data = data.map((element) => {
+      const { result, tens } = calcResult(element);
+      return {
+        ...element,
+        result: result,
+        tens: tens,
+      };
+    });
+
+    if (classify === WOMEN_CLASSIFY) {
+      sortWomen(data);
+    } else if (classify === MEN_CLASSIFY) {
+      sortMen(data);
+    }
+
+    const losses = calcLosses(data);
+
+    return data.map((element, index) => ({
+      ...element,
+      place: index + 1,
+      loss: losses[index],
+    }));
+  };
 
   const handleFetchData = async () => {
     setRoundsState({ isLoading: true });
@@ -39,19 +166,25 @@ export default function Rounds() {
           action: 'getRoundTeamsContesters',
           contest_id: contestId,
         });
-        console.log(results, contesters);
-      } else if (roundsState.currentClass.value === WOMAN_CLASSIFY) {
+        setRoundsState({
+          data: calcTeams(results.data.data, contesters.data.data),
+        });
+      } else if (roundsState.currentClass.value === WOMEN_CLASSIFY) {
         const { status, data } = await fetchData({
           action: 'getRoundWomen',
           contest_id: contestId,
         });
-        console.log(status, data);
-      } else if (roundsState.currentClass.value === MAN_CLASSIFY) {
+        setRoundsState({
+          data: calcIndividual(data.data, WOMEN_CLASSIFY),
+        });
+      } else if (roundsState.currentClass.value === MEN_CLASSIFY) {
         const { status, data } = await fetchData({
           action: 'getRoundMen',
           contest_id: contestId,
         });
-        console.log(status, data);
+        setRoundsState({
+          data: calcIndividual(data.data, MEN_CLASSIFY),
+        });
       }
       setRoundsState({ canBeRefetched: true });
     } catch (error) {
@@ -92,7 +225,57 @@ export default function Rounds() {
         setRoundsState={setRoundsState}
         handleFetchData={handleFetchData}
       />
-      <div className={styles.resultContainer}>Rounds</div>
+
+      <ScrollContainer
+        hideScrollbars={false}
+        nativeMobileScroll={true}
+        className={cx(styles.resultContainer, {
+          [styles['resultContainer__team']]:
+            roundsState.currentClass?.value === TEAM_CLASSIFY,
+          [styles['resultContainer__individual']]:
+            roundsState.currentClass?.value === WOMEN_CLASSIFY ||
+            roundsState.currentClass?.value === MEN_CLASSIFY,
+          [styles['resultContainer__disabled']]:
+            roundsState.data?.length === 0 || roundsState.data === null,
+        })}
+      >
+        {roundsState.data?.length > 0 ? (
+          <div className={styles['resultContainer--nav']}>
+            {roundsState.currentClass?.value === TEAM_CLASSIFY ? (
+              <>
+                <span className={styles.navPlace}>Miejsce</span>
+                <span className={styles.navName}>Nazwa szkoły</span>
+                <span className={styles.navResult}>Punkty</span>
+                <span className={styles.navTens}>Dziesiątki</span>
+                <span className={styles.navLoss}>Strata</span>
+              </>
+            ) : (
+              <>
+                <span className={styles.navPlace}>Miejsce</span>
+                <span className={styles.navName}>Imię i nazwisko</span>
+                <span className={styles.navName}>Drużyna</span>
+                <span className={styles.navResult}>Strzały</span>
+                <span className={styles.navResult}>Punkty</span>
+                <span className={styles.navTens}>Dziesiątki</span>
+                <span className={styles.navLoss}>Strata</span>
+              </>
+            )}
+          </div>
+        ) : (
+          <h2 className={styles.emptyState}>
+            {roundsState.data === null
+              ? 'Wybierz informacje, aby pokazać wyniki.'
+              : roundsState.data?.length === 0 && 'Brak wyników dla tej rundy.'}
+          </h2>
+        )}
+        {roundsState.currentClass?.value === TEAM_CLASSIFY && (
+          <TeamResult roundsState={roundsState} />
+        )}
+        {(roundsState.currentClass?.value === MEN_CLASSIFY ||
+          roundsState.currentClass?.value === WOMEN_CLASSIFY) && (
+          <IndividualResult roundsState={roundsState} />
+        )}
+      </ScrollContainer>
     </div>
   );
 }
@@ -117,6 +300,7 @@ function SearchBar({
               canBeRefetched: false,
               currentSeason: value,
               currentContest: null,
+              data: null,
             })
           }
           width={'100%'}
@@ -139,7 +323,11 @@ function SearchBar({
           options={contests}
           value={roundsState.currentContest}
           onChange={(value) =>
-            setRoundsState({ canBeRefetched: false, currentContest: value })
+            setRoundsState({
+              canBeRefetched: false,
+              currentContest: value,
+              data: null,
+            })
           }
           width={'100%'}
           height={50}
@@ -161,16 +349,20 @@ function SearchBar({
             },
             {
               label: 'Kobiety indywidualnie',
-              value: WOMAN_CLASSIFY,
+              value: WOMEN_CLASSIFY,
             },
             {
               label: 'Mężczyźni indywidualnie',
-              value: MAN_CLASSIFY,
+              value: MEN_CLASSIFY,
             },
           ]}
           value={roundsState.currentClass}
           onChange={(value) =>
-            setRoundsState({ canBeRefetched: false, currentClass: value })
+            setRoundsState({
+              canBeRefetched: false,
+              currentClass: value,
+              data: null,
+            })
           }
           width={'100%'}
           height={50}
@@ -190,5 +382,67 @@ function SearchBar({
         action={handleFetchData}
       />
     </div>
+  );
+}
+
+function TeamResult({ roundsState }) {
+  return (
+    <>
+      {roundsState.data &&
+        roundsState.data.map(
+          ({ school_id, place, name, result, tens, loss }) => (
+            <div className={styles['resultContainer--row']} key={school_id}>
+              <span className={styles.place}>{place}</span>
+              <span className={styles.name}>{name}</span>
+              <span className={styles.result}>{result}</span>
+              <span className={styles.tens}>{tens}</span>
+              <span className={styles.loss}>{-loss}</span>
+            </div>
+          ),
+        )}
+    </>
+  );
+}
+function IndividualResult({ roundsState }) {
+  return (
+    <>
+      {roundsState.data &&
+        roundsState.data.map(
+          ({
+            shooter_id,
+            shoot_1,
+            shoot_2,
+            shoot_3,
+            shoot_4,
+            shoot_5,
+            shoot_6,
+            shoot_7,
+            shoot_8,
+            shoot_9,
+            shoot_10,
+            place,
+            name,
+            firstName,
+            secondName,
+            result,
+            tens,
+            loss,
+          }) => (
+            <div className={styles['resultContainer--row']} key={shooter_id}>
+              <span className={styles.place}>{place}</span>
+              <span className={styles.name}>
+                {firstName} {secondName}
+              </span>
+              <span className={styles.schoolName}>{name}</span>
+              <span
+                className={styles.shoots}
+              >{`${shoot_1}, ${shoot_2}, ${shoot_3}, ${shoot_4}, ${shoot_5}, ${shoot_6}, ${shoot_7}, ${shoot_8}, ${shoot_9}, ${shoot_10}`}</span>
+              <span className={styles.result}>{result}</span>
+              <span className={styles.tens}>{tens}</span>
+              <span className={styles.loss}>{-loss}</span>
+            </div>
+          ),
+        )}
+    </>
   );
 }

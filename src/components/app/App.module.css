@@ -15,6 +15,7 @@ body {
   background-color: #222131;
   display: grid;
   grid-template-rows: 66px 1fr;
+  overflow-x: hidden;
 }
 .error {
   width: 100%;
