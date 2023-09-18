@@ -17,7 +17,7 @@ const pages = [
     element: <Rounds />,
   },
   {
-    path: '/profile',
+    path: '/zawodnik/:id',
     element: <Contester />,
   },
 ];

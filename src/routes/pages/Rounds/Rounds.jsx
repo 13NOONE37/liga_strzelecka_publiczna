@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import cx from 'classnames';
 import styles from './Rounds.module.css';
 import SelectWithHeading from '../../../components/select/SelectWithHeading';
 import Select from '../../../components/select/Select';
-import DefaultButton from '../../../components/button/Button';
+import DefaultButton, { IconButton } from '../../../components/button/Button';
 import AppContext from '../../../store/AppContext';
 import fetchData from '../../../utils/fetchData';
 import {
@@ -12,6 +12,7 @@ import {
   TEAM_CLASSIFY,
 } from '../../../enums/ClassEnum';
 import ScrollContainer from 'react-indiana-drag-scroll';
+import { ReactComponent as DropdownIcon } from '../../../assets/icons/arrow_drop_down.svg';
 
 export default function Rounds() {
   const { seasons, contests } = useContext(AppContext);
@@ -117,12 +118,12 @@ export default function Rounds() {
   };
 
   const calcTeams = (data, contesters) => {
-    //TODO: apply contesters to drop down them next
     sortTeam(data);
     const losses = calcLosses(data);
 
     return data.map((element, index) => ({
       ...element,
+      members: contesters.filter((c) => c.team_id === element.team_id),
       place: index + 1,
       loss: losses[index],
     }));
@@ -254,7 +255,6 @@ export default function Rounds() {
                 <span className={styles.navPlace}>Miejsce</span>
                 <span className={styles.navName}>Imię i nazwisko</span>
                 <span className={styles.navName}>Drużyna</span>
-                <span className={styles.navResult}>Strzały</span>
                 <span className={styles.navResult}>Punkty</span>
                 <span className={styles.navTens}>Dziesiątki</span>
                 <span className={styles.navLoss}>Strata</span>
@@ -389,60 +389,125 @@ function TeamResult({ roundsState }) {
   return (
     <>
       {roundsState.data &&
-        roundsState.data.map(
-          ({ school_id, place, name, result, tens, loss }) => (
-            <div className={styles['resultContainer--row']} key={school_id}>
-              <span className={styles.place}>{place}</span>
-              <span className={styles.name}>{name}</span>
-              <span className={styles.result}>{result}</span>
-              <span className={styles.tens}>{tens}</span>
-              <span className={styles.loss}>{-loss}</span>
-            </div>
-          ),
-        )}
+        roundsState.data.map((element) => <TeamResultElement {...element} />)}
     </>
+  );
+}
+
+function TeamResultElement({
+  school_id,
+  place,
+  name,
+  result,
+  tens,
+  loss,
+  members,
+}) {
+  const [showList, setShowList] = useState(false);
+  return (
+    <div className={styles['resultContainer--row']} key={school_id}>
+      <span className={styles.place}>{place}</span>
+      <span className={styles.name}>{name}</span>
+      <span className={styles.dropdown}>
+        <IconButton
+          icon={<DropdownIcon />}
+          additionalClasses={[
+            cx(styles['dropdownButton'], {
+              [styles['dropdownButton__active']]: showList,
+            }),
+          ]}
+          action={() => setShowList((prev) => !prev)}
+        />
+      </span>
+      <span className={styles.result}>{result}</span>
+      <span className={styles.tens}>{tens}</span>
+      <span className={styles.loss}>{-loss}</span>
+      <div
+        className={styles.shootersList}
+        style={{
+          display: showList ? 'grid' : 'none',
+        }}
+      >
+        {members.map((member) => (
+          <span>
+            {member.firstName} {member.secondName}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 function IndividualResult({ roundsState }) {
   return (
     <>
       {roundsState.data &&
-        roundsState.data.map(
-          ({
-            shooter_id,
-            shoot_1,
-            shoot_2,
-            shoot_3,
-            shoot_4,
-            shoot_5,
-            shoot_6,
-            shoot_7,
-            shoot_8,
-            shoot_9,
-            shoot_10,
-            place,
-            name,
-            firstName,
-            secondName,
-            result,
-            tens,
-            loss,
-          }) => (
-            <div className={styles['resultContainer--row']} key={shooter_id}>
-              <span className={styles.place}>{place}</span>
-              <span className={styles.name}>
-                {firstName} {secondName}
-              </span>
-              <span className={styles.schoolName}>{name}</span>
-              <span
-                className={styles.shoots}
-              >{`${shoot_1}, ${shoot_2}, ${shoot_3}, ${shoot_4}, ${shoot_5}, ${shoot_6}, ${shoot_7}, ${shoot_8}, ${shoot_9}, ${shoot_10}`}</span>
-              <span className={styles.result}>{result}</span>
-              <span className={styles.tens}>{tens}</span>
-              <span className={styles.loss}>{-loss}</span>
-            </div>
-          ),
-        )}
+        roundsState.data.map((element) => (
+          <IndividualResultElement {...element} />
+        ))}
     </>
   );
+
+  function IndividualResultElement({
+    shooter_id,
+    shoot_1,
+    shoot_2,
+    shoot_3,
+    shoot_4,
+    shoot_5,
+    shoot_6,
+    shoot_7,
+    shoot_8,
+    shoot_9,
+    shoot_10,
+    place,
+    name,
+    firstName,
+    secondName,
+    result,
+    tens,
+    loss,
+  }) {
+    const [showList, setShowList] = useState(false);
+    return (
+      <div className={styles['resultContainer--row']} key={shooter_id}>
+        <span className={styles.place}>{place}</span>
+        <span className={styles.name}>
+          {firstName} {secondName}
+        </span>
+        <span className={styles.schoolName}>{name}</span>
+        <span className={styles.dropdown}>
+          <IconButton
+            icon={<DropdownIcon />}
+            additionalClasses={[
+              cx(styles['dropdownButton'], {
+                [styles['dropdownButton__active']]: showList,
+              }),
+            ]}
+            action={() => setShowList((prev) => !prev)}
+          />
+        </span>
+        <span className={styles.result}>{result}</span>
+        <span className={styles.tens}>{tens}</span>
+        <span className={styles.loss}>{-loss}</span>
+        <div
+          className={styles.shootsList}
+          style={{
+            display: showList ? 'grid' : 'none',
+          }}
+        >
+          <span>Strzały:</span>
+          <span>{shoot_1}</span>
+          <span>{shoot_2}</span>
+          <span>{shoot_3}</span>
+          <span>{shoot_4}</span>
+          <span>{shoot_5}</span>
+          <span>{shoot_6}</span>
+          <span>{shoot_7}</span>
+          <span>{shoot_8}</span>
+          <span>{shoot_9}</span>
+          <span>{shoot_10}</span>
+        </div>
+      </div>
+    );
+  }
 }

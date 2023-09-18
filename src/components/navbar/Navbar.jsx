@@ -67,7 +67,7 @@ function Links({ setShowAside }) {
         to={'/generalka'}
         onClick={handleHideAside}
         className={cx(styles.link, {
-          [styles['link__active']]: pathname === '/generalka',
+          [styles['link__active']]: pathname.includes('/generalka'),
         })}
       >
         Generalka
@@ -76,20 +76,20 @@ function Links({ setShowAside }) {
         to={'/rundy'}
         onClick={handleHideAside}
         className={cx(styles.link, {
-          [styles['link__active']]: pathname === '/rundy',
+          [styles['link__active']]: pathname.includes('/rundy'),
         })}
       >
         Rundy
       </NavLink>
-      <NavLink
-        to={'/profile'}
+      {/* <NavLink
+        to={'/zawodnik'}
         onClick={handleHideAside}
         className={cx(styles.link, {
-          [styles['link__active']]: pathname === '/profile',
+          [styles['link__active']]: pathname.includes('/zawodnik'),
         })}
       >
-        Profile
-      </NavLink>
+        Zawodnik
+      </NavLink> */}
     </>
   );
 }

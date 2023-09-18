@@ -66,19 +66,62 @@
 }
 .resultContainer__team .resultContainer--row {
   width: 480px;
-  grid-template-columns: 70px 1fr 70px 70px 70px;
+  grid-template-columns: 70px 1fr 60px 70px 70px 70px;
+  grid-template-rows: auto auto;
+}
+.shootersList {
+  width: 100%;
+  height: 100%;
+  grid-area: 2/ 1/ 3 span / 7;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  place-items: center;
+  grid-gap: 1rem;
+  padding: 0.5rem;
+  padding-top: 1rem;
+
+  /* display: none; */
+}
+.shootsList {
+  width: 100%;
+  height: 100%;
+  grid-area: 2/ 1/ 3 span / 8;
+  display: grid;
+  grid-template-columns: 70px repeat(10, 25px) 1fr;
+  place-items: center;
+  grid-gap: 1rem;
+  padding: 1rem;
+}
+
+.shootsList span {
+  font-weight: 500;
+}
+.shootsList span:first-child {
+  font-weight: 400;
+}
+.dropdownButton {
+  padding: 0;
+}
+.dropdownButton svg {
+  transition: transform 0s linear;
+}
+.dropdownButton__active svg {
+  transform: rotate(180deg);
 }
 .resultContainer__team .resultContainer--nav {
   width: 480px;
   grid-template-columns: 70px 1fr 70px 70px 70px;
 }
+
 .resultContainer__individual .resultContainer--row {
   width: 900px;
-  grid-template-columns: 70px 180px 180px 1fr 70px 70px 70px;
+  grid-template-columns: 70px 2fr 3fr 60px 70px 70px 70px;
+  grid-template-rows: auto auto;
 }
 .resultContainer__individual .resultContainer--nav {
   width: 900px;
-  grid-template-columns: 70px 180px 180px 1fr 70px 70px 70px;
+  grid-template-columns: 70px 2fr 3fr 70px 70px 70px;
 }
 
 .name,
@@ -103,6 +146,7 @@
 @media (min-width: 547px) {
   .resultContainer__team {
     border-radius: 0 0 10px 10px;
+    cursor: default;
   }
   .resultContainer__team .resultContainer--row {
     width: 100%;
@@ -114,6 +158,7 @@
 @media (min-width: 998px) {
   .resultContainer__individual {
     border-radius: 0 0 10px 10px;
+    cursor: default;
   }
   .resultContainer__individual .resultContainer--row {
     width: 100%;
@@ -158,16 +203,16 @@
     font-size: 16px;
   }
   .resultContainer__team .resultContainer--row {
-    grid-template-columns: 90px 1fr 90px 90px 90px;
+    grid-template-columns: 90px 1fr 60px 90px 90px 90px;
   }
   .resultContainer__team .resultContainer--nav {
     grid-template-columns: 90px 1fr 90px 90px 90px;
   }
   .resultContainer__individual .resultContainer--row {
-    grid-template-columns: 75px 1fr 1fr 1fr 75px 75px 75px;
+    grid-template-columns: 75px 1fr 1fr 60px 75px 75px 75px;
   }
   .resultContainer__individual .resultContainer--nav {
-    grid-template-columns: 75px 1fr 1fr 1fr 75px 75px 75px;
+    grid-template-columns: 75px 1fr 1fr 75px 75px 75px;
   }
   .searchBar > * {
     width: 100%;

@@ -93,6 +93,7 @@
 @media (min-width: 547px) {
   .resultContainer__team {
     border-radius: 0 0 10px 10px;
+    cursor: default;
   }
   .resultContainer__team .resultContainer--row {
     width: 100%;
@@ -104,6 +105,7 @@
 @media (min-width: 719px) {
   .resultContainer__individual {
     border-radius: 0 0 10px 10px;
+    cursor: default;
   }
   .resultContainer__individual .resultContainer--row {
     width: 100%;
