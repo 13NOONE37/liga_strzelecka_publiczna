@@ -9,11 +9,11 @@ const pages = [
     element: <Start />,
   },
   {
-    path: '/generalka',
+    path: '/generalka/:season?/:classify?',
     element: <General />,
   },
   {
-    path: '/rundy',
+    path: '/rundy/:season?/:round?/:classify?',
     element: <Rounds />,
   },
   {

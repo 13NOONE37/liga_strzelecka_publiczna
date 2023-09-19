@@ -14,6 +14,7 @@ import {
 } from '../../../enums/ClassEnum';
 import getDateFromTimestamp from '../../../utils/getDateFromTimestamp';
 import fetchData from '../../../utils/fetchData';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 export default function General() {
   const { seasons } = useContext(AppContext);
   const [generalState, setGeneralState] = useReducer(
@@ -157,6 +158,31 @@ function SearchBar({
   setGeneralState,
   handleFetchData,
 }) {
+  const classes = [
+    {
+      label: 'Drużyny',
+      value: TEAM_CLASSIFY,
+    },
+    {
+      label: 'Kobiety indywidualnie',
+      value: WOMEN_CLASSIFY,
+    },
+    {
+      label: 'Mężczyźni indywidualnie',
+      value: MEN_CLASSIFY,
+    },
+  ];
+  const { season, classify } = useParams();
+  const navigate = useNavigate();
+  useEffect(() => {
+    setGeneralState({
+      currentSeason: seasons.find(
+        (item) => item.label === season?.replaceAll('-', '/'),
+      ),
+      currentClass: classes.find((item) => item.value == classify),
+    });
+  }, []);
+
   return (
     <div className={styles.searchBar}>
       <SelectWithHeading heading={'Wybierz sezon:'}>
@@ -165,13 +191,18 @@ function SearchBar({
           placeholder={'Kliknij by wybrać'}
           options={seasons}
           value={generalState.currentSeason}
-          onChange={(value) =>
+          onChange={(value) => {
+            navigate(
+              `/generalka/${value.label?.replaceAll('/', '-')}/${
+                generalState.currentClass ? generalState.currentClass.value : ''
+              }`,
+            );
             setGeneralState({
               currentSeason: value,
               canBeRefetched: false,
               data: null,
-            })
-          }
+            });
+          }}
           width={'100%'}
           height={50}
           backgroundColor={'#222131'}
@@ -181,28 +212,21 @@ function SearchBar({
         <Select
           isSearchable={false}
           placeholder={'Kliknij by wybrać'}
-          options={[
-            {
-              label: 'Drużyny',
-              value: TEAM_CLASSIFY,
-            },
-            {
-              label: 'Kobiety indywidualnie',
-              value: WOMEN_CLASSIFY,
-            },
-            {
-              label: 'Mężczyźni indywidualnie',
-              value: MEN_CLASSIFY,
-            },
-          ]}
+          options={classes}
           value={generalState.currentClass}
-          onChange={(value) =>
+          onChange={(value) => {
+            navigate(
+              `/generalka/${generalState.currentSeason?.label.replaceAll(
+                '/',
+                '-',
+              )}/${value.value}`,
+            );
             setGeneralState({
               currentClass: value,
               canBeRefetched: false,
               data: null,
-            })
-          }
+            });
+          }}
           width={'100%'}
           height={50}
           backgroundColor={'#222131'}

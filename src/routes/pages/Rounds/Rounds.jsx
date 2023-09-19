@@ -13,6 +13,7 @@ import {
 } from '../../../enums/ClassEnum';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { ReactComponent as DropdownIcon } from '../../../assets/icons/arrow_drop_down.svg';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 
 export default function Rounds() {
   const { seasons, contests } = useContext(AppContext);
@@ -287,6 +288,36 @@ function SearchBar({
   setRoundsState,
   handleFetchData,
 }) {
+  const classes = [
+    {
+      label: 'Drużyny',
+      value: TEAM_CLASSIFY,
+    },
+    {
+      label: 'Kobiety indywidualnie',
+      value: WOMEN_CLASSIFY,
+    },
+    {
+      label: 'Mężczyźni indywidualnie',
+      value: MEN_CLASSIFY,
+    },
+  ];
+  const { season, classify, round } = useParams();
+  const navigate = useNavigate();
+  useEffect(() => {
+    setRoundsState({
+      currentSeason: seasons?.find(
+        (item) => item.label === season?.replaceAll('-', '/'),
+      ),
+      currentClass: classes.find((item) => item.value == classify),
+    });
+  }, []);
+  useEffect(() => {
+    setRoundsState({
+      currentContest: contests?.find((i) => i.value === round) ?? null,
+    });
+  }, [contests]);
+
   return (
     <div className={styles.searchBar}>
       <SelectWithHeading heading={'Wybierz sezon:'}>
@@ -295,14 +326,19 @@ function SearchBar({
           placeholder={'Kliknij by wybrać'}
           options={seasons}
           value={roundsState.currentSeason}
-          onChange={(value) =>
+          onChange={(value) => {
+            navigate(
+              `/rundy/${value.label?.replaceAll('/', '-')}/undefined/${
+                roundsState.currentClass?.value
+              }`,
+            );
             setRoundsState({
               canBeRefetched: false,
               currentSeason: value,
               currentContest: null,
               data: null,
-            })
-          }
+            });
+          }}
           width={'100%'}
           height={50}
           backgroundColor={'#222131'}
@@ -322,13 +358,19 @@ function SearchBar({
           }
           options={contests}
           value={roundsState.currentContest}
-          onChange={(value) =>
+          onChange={(value) => {
+            navigate(
+              `/rundy/${roundsState.currentSeason?.label.replaceAll(
+                '/',
+                '-',
+              )}/${value.value}/${roundsState.currentClass?.value}`,
+            );
             setRoundsState({
               canBeRefetched: false,
               currentContest: value,
               data: null,
-            })
-          }
+            });
+          }}
           width={'100%'}
           height={50}
           backgroundColor={'#222131'}
@@ -357,13 +399,19 @@ function SearchBar({
             },
           ]}
           value={roundsState.currentClass}
-          onChange={(value) =>
+          onChange={(value) => {
+            navigate(
+              `/rundy/${roundsState.currentSeason?.label.replaceAll(
+                '/',
+                '-',
+              )}/${roundsState.currentContest?.value}/${value.value}`,
+            );
             setRoundsState({
               canBeRefetched: false,
               currentClass: value,
               data: null,
-            })
-          }
+            });
+          }}
           width={'100%'}
           height={50}
           backgroundColor={'#222131'}
@@ -389,7 +437,9 @@ function TeamResult({ roundsState }) {
   return (
     <>
       {roundsState.data &&
-        roundsState.data.map((element) => <TeamResultElement {...element} />)}
+        roundsState.data.map((element) => (
+          <TeamResultElement {...element} key={element.team_id} />
+        ))}
     </>
   );
 }
@@ -405,7 +455,7 @@ function TeamResultElement({
 }) {
   const [showList, setShowList] = useState(false);
   return (
-    <div className={styles['resultContainer--row']} key={school_id}>
+    <div className={styles['resultContainer--row']}>
       <span className={styles.place}>{place}</span>
       <span className={styles.name}>{name}</span>
       <span className={styles.dropdown}>
@@ -429,9 +479,12 @@ function TeamResultElement({
         }}
       >
         {members.map((member) => (
-          <span>
+          <NavLink
+            to={`/zawodnik/${member.shooter_id}`}
+            className={styles['shootersList--link']}
+          >
             {member.firstName} {member.secondName}
-          </span>
+          </NavLink>
         ))}
       </div>
     </div>
@@ -442,7 +495,7 @@ function IndividualResult({ roundsState }) {
     <>
       {roundsState.data &&
         roundsState.data.map((element) => (
-          <IndividualResultElement {...element} />
+          <IndividualResultElement {...element} key={element.shooter_id} />
         ))}
     </>
   );
@@ -469,11 +522,16 @@ function IndividualResult({ roundsState }) {
   }) {
     const [showList, setShowList] = useState(false);
     return (
-      <div className={styles['resultContainer--row']} key={shooter_id}>
+      <div className={styles['resultContainer--row']}>
         <span className={styles.place}>{place}</span>
-        <span className={styles.name}>
+        <NavLink
+          to={`/zawodnik/${shooter_id}`}
+          className={styles['shootersList--link']}
+        >
+          {/* <span className={styles.name}> */}
           {firstName} {secondName}
-        </span>
+          {/* </span> */}
+        </NavLink>
         <span className={styles.schoolName}>{name}</span>
         <span className={styles.dropdown}>
           <IconButton
