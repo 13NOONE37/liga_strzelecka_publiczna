@@ -9,6 +9,8 @@ require('endpoints/getRoundMen.php');
 require('endpoints/getRoundWomen.php');
 require('endpoints/getRoundTeamsResult.php');
 require('endpoints/getRoundTeamsContesters.php');
+require('endpoints/getProfileData.php');
+require('endpoints/getUserName.php');
 
 $host = 'localhost'; //zmienić w zależności od ustawień bazy
 $username = 'root'; //zmienić w zależności od ustawień bazy
@@ -57,6 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
             case 'getRoundTeamsContesters':
                 getRoundTeamsContesters($conn);
+                break;
+            case 'getProfileData':
+                getProfileData($conn);
+                break;
+            case 'getUserName':
+                getUserName($conn);
                 break;
 
             default:

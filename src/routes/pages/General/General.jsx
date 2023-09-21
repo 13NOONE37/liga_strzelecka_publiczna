@@ -14,7 +14,10 @@ import {
 } from '../../../enums/ClassEnum';
 import getDateFromTimestamp from '../../../utils/getDateFromTimestamp';
 import fetchData from '../../../utils/fetchData';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import Input from '../../../components/input/Input';
+import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg';
+
 export default function General() {
   const { seasons } = useContext(AppContext);
   const [generalState, setGeneralState] = useReducer(
@@ -25,6 +28,7 @@ export default function General() {
       currentClass: null,
       currentSeason: null,
       data: null,
+      searchPhrase: '',
     },
   );
 
@@ -46,7 +50,7 @@ export default function General() {
     }));
   };
   const handleFetchData = async () => {
-    setGeneralState({ isLoading: true });
+    setGeneralState({ isLoading: true, searchPhrase: '' });
 
     try {
       const startDate = getDateFromTimestamp(
@@ -97,6 +101,31 @@ export default function General() {
         setGeneralState={setGeneralState}
         handleFetchData={handleFetchData}
       />
+      <div className={styles.searchBox}>
+        <Input
+          type={'text'}
+          value={generalState.searchPhrase}
+          disabled={!generalState.data?.length > 0}
+          placeholder={'Szukaj...'}
+          onChange={(e) => {
+            setGeneralState({ searchPhrase: e.target.value });
+          }}
+          additionalClasses={[styles.searchInput]}
+          icon={
+            <div
+              style={{
+                display: 'grid',
+                placeItems: 'center',
+              }}
+            >
+              <SearchIcon
+                style={{ fill: '#fff', width: '25px', height: '25px' }}
+              />
+            </div>
+          }
+          iconPosition={'right'}
+        />
+      </div>
 
       <ScrollContainer
         hideScrollbars={false}
@@ -248,8 +277,13 @@ function TeamResult({ generalState }) {
   return (
     <>
       {generalState.data &&
-        generalState.data.map(
-          ({ school_id, place, name, result, tens, loss }) => (
+        generalState.data
+          .filter((item) =>
+            item.name
+              .toLowerCase()
+              .includes(generalState.searchPhrase.trim().toLowerCase()),
+          )
+          .map(({ school_id, place, name, result, tens, loss }) => (
             <div className={styles['resultContainer--row']} key={school_id}>
               <span className={styles.place}>{place}</span>
               <span className={styles.name}>{name}</span>
@@ -257,8 +291,7 @@ function TeamResult({ generalState }) {
               <span className={styles.tens}>{tens}</span>
               <span className={styles.loss}>{-loss}</span>
             </div>
-          ),
-        )}
+          ))}
     </>
   );
 }
@@ -266,29 +299,39 @@ function IndividualResult({ generalState }) {
   return (
     <>
       {generalState.data &&
-        generalState.data.map(
-          ({
-            shooter_id,
-            place,
-            name,
-            firstName,
-            secondName,
-            result,
-            tens,
-            loss,
-          }) => (
-            <div className={styles['resultContainer--row']} key={shooter_id}>
-              <span className={styles.place}>{place}</span>
-              <span className={styles.name}>
-                {firstName} {secondName}
-              </span>
-              <span className={styles.schoolName}>{name}</span>
-              <span className={styles.result}>{result}</span>
-              <span className={styles.tens}>{tens}</span>
-              <span className={styles.loss}>{-loss}</span>
-            </div>
-          ),
-        )}
+        generalState.data
+          .filter((item) =>
+            `${item.firstName} ${item.secondName} ${item.name}`
+              .toLowerCase()
+              .includes(generalState.searchPhrase.trim().toLowerCase()),
+          )
+          .map(
+            ({
+              shooter_id,
+              place,
+              name,
+              firstName,
+              secondName,
+              result,
+              tens,
+              loss,
+            }) => (
+              <div className={styles['resultContainer--row']} key={shooter_id}>
+                <span className={styles.place}>{place}</span>
+
+                <NavLink
+                  to={`/zawodnik/${shooter_id}`}
+                  className={styles['shootersList--link']}
+                >
+                  {firstName} {secondName}
+                </NavLink>
+                <span className={styles.schoolName}>{name}</span>
+                <span className={styles.result}>{result}</span>
+                <span className={styles.tens}>{tens}</span>
+                <span className={styles.loss}>{-loss}</span>
+              </div>
+            ),
+          )}
     </>
   );
 }

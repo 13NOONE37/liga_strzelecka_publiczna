@@ -14,6 +14,9 @@ import {
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { ReactComponent as DropdownIcon } from '../../../assets/icons/arrow_drop_down.svg';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import Input from '../../../components/input/Input';
+import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg';
+import calcResult from '../../../utils/calcResult';
 
 export default function Rounds() {
   const { seasons, contests } = useContext(AppContext);
@@ -27,6 +30,7 @@ export default function Rounds() {
       isLoading: false,
       canBeRefetched: false,
       data: null,
+      searchPhrase: '',
     },
   );
   const sortTeam = (data) => {
@@ -90,22 +94,7 @@ export default function Rounds() {
       return b.result - a.result;
     });
   };
-  const calcResult = (element) => {
-    let result = 0;
-    let tens = 0;
 
-    for (let i = 1; i <= 10; i++) {
-      const shootKey = `shoot_${i}`;
-      if (typeof element[shootKey] === 'number') {
-        if (element[shootKey] === 10) {
-          tens++;
-        }
-        result += element[shootKey];
-      }
-    }
-
-    return { result, tens };
-  };
   const calcLosses = (data) => {
     return data.map((element, index) => {
       if (index === 0) {
@@ -155,7 +144,7 @@ export default function Rounds() {
   };
 
   const handleFetchData = async () => {
-    setRoundsState({ isLoading: true });
+    setRoundsState({ isLoading: true, searchPhrase: '' });
 
     try {
       const contestId = roundsState.currentContest.value;
@@ -227,6 +216,32 @@ export default function Rounds() {
         setRoundsState={setRoundsState}
         handleFetchData={handleFetchData}
       />
+
+      <div className={styles.searchBox}>
+        <Input
+          type={'text'}
+          value={roundsState.searchPhrase}
+          disabled={!roundsState.data?.length > 0}
+          placeholder={'Szukaj...'}
+          onChange={(e) => {
+            setRoundsState({ searchPhrase: e.target.value });
+          }}
+          additionalClasses={[styles.searchInput]}
+          icon={
+            <div
+              style={{
+                display: 'grid',
+                placeItems: 'center',
+              }}
+            >
+              <SearchIcon
+                style={{ fill: '#fff', width: '25px', height: '25px' }}
+              />
+            </div>
+          }
+          iconPosition={'right'}
+        />
+      </div>
 
       <ScrollContainer
         hideScrollbars={false}
@@ -437,9 +452,15 @@ function TeamResult({ roundsState }) {
   return (
     <>
       {roundsState.data &&
-        roundsState.data.map((element) => (
-          <TeamResultElement {...element} key={element.team_id} />
-        ))}
+        roundsState.data
+          .filter((item) =>
+            item.name
+              .toLowerCase()
+              .includes(roundsState.searchPhrase.trim().toLowerCase()),
+          )
+          .map((element) => (
+            <TeamResultElement {...element} key={element.team_id} />
+          ))}
     </>
   );
 }
@@ -482,6 +503,7 @@ function TeamResultElement({
           <NavLink
             to={`/zawodnik/${member.shooter_id}`}
             className={styles['shootersList--link']}
+            key={member.shooter_id}
           >
             {member.firstName} {member.secondName}
           </NavLink>
@@ -494,9 +516,15 @@ function IndividualResult({ roundsState }) {
   return (
     <>
       {roundsState.data &&
-        roundsState.data.map((element) => (
-          <IndividualResultElement {...element} key={element.shooter_id} />
-        ))}
+        roundsState.data
+          .filter((item) =>
+            `${item.firstName} ${item.secondName} ${item.name}`
+              .toLowerCase()
+              .includes(roundsState.searchPhrase.trim().toLowerCase()),
+          )
+          .map((element) => (
+            <IndividualResultElement {...element} key={element.shooter_id} />
+          ))}
     </>
   );
 

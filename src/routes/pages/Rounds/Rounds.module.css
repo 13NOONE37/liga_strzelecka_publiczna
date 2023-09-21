@@ -7,6 +7,20 @@
   padding: 1rem;
   gap: 1rem;
 }
+.searchBox {
+  width: 1100px;
+  max-width: 100%;
+}
+.searchInput {
+  width: 300px;
+  max-width: 100%;
+  grid-template-rows: auto !important;
+  margin-top: 1rem;
+}
+.searchInput > div {
+  color: #fff;
+  background-color: #39394b;
+}
 .searchBar {
   background-color: #39394b;
   max-width: 100%;

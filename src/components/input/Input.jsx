@@ -21,6 +21,7 @@ export default function Input({
   disabled,
   focusOnMount,
   setIsFocused,
+  additionalClasses = [],
   ...params
 }) {
   const [inputState, setInputState] = useReducer(
@@ -50,7 +51,7 @@ export default function Input({
   }, []);
 
   return (
-    <div className={styles['box']}>
+    <div className={cx(styles['box'], ...additionalClasses)}>
       {heading && (
         <label className={styles['label']} htmlFor={inputState.id}>
           {heading}
