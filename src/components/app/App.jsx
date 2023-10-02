@@ -9,6 +9,7 @@ import fetchData from '../../utils/fetchData';
 import Navbar from '../navbar/Navbar';
 import calculateSeasons from '../../utils/calculateSeasons';
 import Loader from '../loader/Loader';
+import Waves from '../waves/waves';
 
 function App() {
   const [appState, setAppState] = useReducer(
@@ -37,7 +38,7 @@ function App() {
             seasons: calculateSeasons(contests),
           });
         } else {
-          setAppState({ contests: [], seasons: null });
+          setAppState({ contests: undefined, seasons: undefined });
         }
       } catch (error) {
         setAppState({ error: true });
@@ -73,6 +74,7 @@ function App() {
           </Routes>
         </AppContext.Provider>
       )}
+      <Waves />
     </div>
   );
 }

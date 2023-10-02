@@ -26,6 +26,8 @@ export default function General() {
       isLoading: false,
       canBeRefetched: false,
       currentClass: null,
+      prevCurrentClass: null,
+
       currentSeason: null,
       data: null,
       searchPhrase: '',
@@ -39,12 +41,14 @@ export default function General() {
       } else {
         const prevResult = parseInt(data[index - 1].result);
         const currentResult = parseInt(element.result, 10);
+        if (isNaN(prevResult) || isNaN(currentResult)) return 0;
         return prevResult - currentResult;
       }
     });
 
     return data.map((element, index) => ({
       ...element,
+      result: element.result ?? 0,
       place: index + 1,
       loss: losses[index],
     }));
@@ -58,7 +62,7 @@ export default function General() {
       );
       const endDate = getDateFromTimestamp(generalState.currentSeason.value[1]);
 
-      if (generalState.currentClass.value === TEAM_CLASSIFY) {
+      if (generalState.prevCurrentClass.value === TEAM_CLASSIFY) {
         const { status, data } = await fetchData({
           action: 'getGeneralTeams',
           start_date: startDate,
@@ -67,7 +71,7 @@ export default function General() {
         setGeneralState({
           data: calcLossAndPlace(data.data),
         });
-      } else if (generalState.currentClass.value === WOMEN_CLASSIFY) {
+      } else if (generalState.prevCurrentClass.value === WOMEN_CLASSIFY) {
         const { status, data } = await fetchData({
           action: 'getGeneralWomen',
           start_date: startDate,
@@ -76,7 +80,7 @@ export default function General() {
         setGeneralState({
           data: calcLossAndPlace(data.data),
         });
-      } else if (generalState.currentClass.value === MEN_CLASSIFY) {
+      } else if (generalState.prevCurrentClass.value === MEN_CLASSIFY) {
         const { status, data } = await fetchData({
           action: 'getGeneralMen',
           start_date: startDate,
@@ -90,7 +94,10 @@ export default function General() {
     } catch (error) {
       console.log(error);
     }
-    setGeneralState({ isLoading: false });
+    setGeneralState({
+      isLoading: false,
+      currentClass: generalState.prevCurrentClass,
+    });
   };
 
   return (
@@ -101,7 +108,12 @@ export default function General() {
         setGeneralState={setGeneralState}
         handleFetchData={handleFetchData}
       />
-      <div className={styles.searchBox}>
+      <div
+        className={styles.searchBox}
+        style={{
+          opacity: !generalState.data?.length > 0 ? '0' : '1',
+        }}
+      >
         <Input
           type={'text'}
           value={generalState.searchPhrase}
@@ -145,7 +157,7 @@ export default function General() {
             {generalState.currentClass?.value === TEAM_CLASSIFY ? (
               <>
                 <span className={styles.navPlace}>Miejsce</span>
-                <span className={styles.navName}>Nazwa szkoły</span>
+                <span className={styles.navName}>Nazwa drużyny</span>
                 <span className={styles.navResult}>Punkty</span>
                 <span className={styles.navTens}>Dziesiątki</span>
                 <span className={styles.navLoss}>Strata</span>
@@ -205,10 +217,10 @@ function SearchBar({
   const navigate = useNavigate();
   useEffect(() => {
     setGeneralState({
-      currentSeason: seasons.find(
+      currentSeason: seasons?.find(
         (item) => item.label === season?.replaceAll('-', '/'),
       ),
-      currentClass: classes.find((item) => item.value == classify),
+      prevCurrentClass: classes.find((item) => item.value == classify),
     });
   }, []);
 
@@ -218,7 +230,7 @@ function SearchBar({
         <Select
           isSearchable={false}
           placeholder={'Kliknij by wybrać'}
-          options={seasons}
+          options={seasons ?? undefined}
           value={generalState.currentSeason}
           onChange={(value) => {
             navigate(
@@ -229,7 +241,6 @@ function SearchBar({
             setGeneralState({
               currentSeason: value,
               canBeRefetched: false,
-              data: null,
             });
           }}
           width={'100%'}
@@ -242,7 +253,7 @@ function SearchBar({
           isSearchable={false}
           placeholder={'Kliknij by wybrać'}
           options={classes}
-          value={generalState.currentClass}
+          value={generalState.prevCurrentClass}
           onChange={(value) => {
             navigate(
               `/generalka/${generalState.currentSeason?.label.replaceAll(
@@ -251,9 +262,8 @@ function SearchBar({
               )}/${value.value}`,
             );
             setGeneralState({
-              currentClass: value,
+              prevCurrentClass: value,
               canBeRefetched: false,
-              data: null,
             });
           }}
           width={'100%'}
@@ -265,7 +275,7 @@ function SearchBar({
         text={generalState.canBeRefetched ? 'Odśwież' : 'Wyświetl'}
         customSize={{ width: '140px' }}
         additionalClasses={[styles.showButton]}
-        disabled={!generalState.currentSeason || !generalState.currentClass}
+        disabled={!generalState.currentSeason || !generalState.prevCurrentClass}
         isLoading={generalState.isLoading}
         action={handleFetchData}
       />

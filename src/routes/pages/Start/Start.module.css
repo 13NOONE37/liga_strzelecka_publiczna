@@ -1,68 +1,189 @@
 .container {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  gap: 2rem;
-  position: relative;
-}
-section {
   z-index: 2;
 }
-.waveBottom,
-.waveTop {
-  position: absolute;
-  left: 0;
-  touch-action: none;
-  pointer-events: none;
-  min-height: 50vh;
-}
-.waveBottom {
-  bottom: 0;
-}
-.waveTop {
-  display: none;
-  top: 0;
-}
+
 .entrance {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
+  display: grid;
+  place-items: center;
+  grid-gap: 2rem;
+  padding: 2rem 0;
 }
-.entrance h1 {
+.heading {
   color: #fff;
-  /* text-align: center; */
-  font-size: 2rem;
+  text-align: center;
+  font-size: 1.5rem;
+  opacity: 0;
+  animation: showIn 0.5s 0.5s ease-out forwards;
 }
-.entrance h1 span {
+.heading span {
   color: #605cff;
 }
-.entrance img {
-  width: 150px;
+.photo {
+  position: relative;
+  width: 100vw;
+  max-height: 300px;
+  aspect-ratio: 16/9;
+  /* border: 4px solid #605cff; */
+  background-image: url('../../../assets/2_landscape.jpg');
+  background-size: cover;
+
+  opacity: 0;
+  animation: showIn 0.5s 0.5s ease-out forwards;
 }
-.entrance button {
+.photo::after {
+  position: absolute;
+  content: '';
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.5;
 }
-.about {
+
+.buttonsRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 4rem;
 }
-.about h2 {
+.cta__general {
+  min-width: 150px;
+  opacity: 0;
+  transform-origin: center;
+  animation: showFromLeft 0.25s 1.5s ease-out forwards;
+}
+.cta__round {
+  min-width: 150px;
+  opacity: 0;
+  animation: showFromRight 0.25s 1.5s ease-out forwards;
+}
+@keyframes showFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+@keyframes showFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes showIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.aboutHeading {
   color: #fff;
   font-size: 2rem;
-}
-.about p {
-  margin-top: 1rem;
+  place-self: center;
+  text-align: start;
+  max-width: 750px;
+  width: 100%;
   padding-left: 2rem;
-  font-size: 18px;
-  color: #fff;
-  /* columns: 2; */
+  opacity: 0;
+  animation: showIn 0.5s 0.5s ease-out forwards;
 }
-.about p ul {
+.aboutText {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
+  padding: 0 2rem;
+
+  max-width: 750px;
+
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 0.2px;
+  line-height: 1.6rem;
+
+  opacity: 0;
+  animation: showIn 0.5s 0.5s ease-out forwards;
 }
-@media (min-width: 750px) {
+
+@media (min-width: 550px) {
+  .heading {
+    font-size: 2rem;
+  }
+}
+@media (min-width: 1000px) {
   .entrance {
-    flex-direction: row-reverse;
+    margin-top: 4rem;
+    padding: 2rem;
+    padding-right: unset;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: 'heading photo' 'about photo' 'cta photo';
+  }
+  .heading {
+    text-align: start;
+    font-size: 2rem;
+    place-self: center;
+    grid-area: heading;
+    width: 400px;
+  }
+  .photo {
+    place-self: start center;
+    position: relative;
+    width: 515px;
+    height: 527px;
+    max-height: unset;
+    grid-area: photo;
+    background-image: url('../../../assets/2_square.jpg');
+    --mask: url('../../../assets/mask.svg');
+    --webkit-mask: var(--mask);
+    -webkit-mask: var(--mask);
+    mask: var(--mask);
+
+    background-size: cover;
+  }
+  .photo::after {
+    opacity: 0;
+  }
+
+  .aboutHeading {
+    display: none;
+  }
+  .aboutText {
+    padding: unset;
+    grid-area: about;
+    width: 400px;
+  }
+  .buttonsRow {
+    margin-top: 1rem;
+    grid-area: cta;
+    place-self: center;
+  }
+  .about .entrance .waveBottom {
+    display: none;
+  }
+}
+@media (min-width: 1200px) {
+  .heading {
+    font-size: 3rem;
+    width: 600px;
+  }
+
+  .aboutText {
+    width: 600px;
   }
 }

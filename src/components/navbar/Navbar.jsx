@@ -81,6 +81,14 @@ function Links({ setShowAside }) {
       >
         Rundy
       </NavLink>
+      <NavLink
+        to={'https://sls.zsoitklodawa.pl/'}
+        target="_blank"
+        onClick={handleHideAside}
+        className={styles.link}
+      >
+        Sezony 2019/23
+      </NavLink>
       {/* <NavLink
         to={'/zawodnik'}
         onClick={handleHideAside}

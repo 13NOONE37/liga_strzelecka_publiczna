@@ -1,0 +1,20 @@
+.wave {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  touch-action: none;
+  pointer-events: none;
+  width: 100%;
+  z-index: 1;
+  transform-origin: bottom;
+  transform: scaleY(0);
+  animation: showLines 0.25s 1s ease-out forwards;
+}
+@keyframes showLines {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}

@@ -16,6 +16,7 @@ body {
   display: grid;
   grid-template-rows: 66px 1fr;
   overflow-x: hidden;
+  position: relative;
 }
 .error {
   width: 100%;

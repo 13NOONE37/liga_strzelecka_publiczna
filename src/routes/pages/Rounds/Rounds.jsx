@@ -25,6 +25,7 @@ export default function Rounds() {
     {
       localContests: null,
       currentContest: null,
+      prevCurrentClass: null,
       currentClass: null,
       currentSeason: null,
       isLoading: false,
@@ -102,6 +103,8 @@ export default function Rounds() {
       } else {
         const prevResult = parseInt(data[index - 1].result);
         const currentResult = parseInt(element.result, 10);
+        if (isNaN(prevResult) || isNaN(currentResult)) return 0;
+
         return prevResult - currentResult;
       }
     });
@@ -114,6 +117,7 @@ export default function Rounds() {
     return data.map((element, index) => ({
       ...element,
       members: contesters.filter((c) => c.team_id === element.team_id),
+      result: element.result,
       place: index + 1,
       loss: losses[index],
     }));
@@ -123,7 +127,7 @@ export default function Rounds() {
       const { result, tens } = calcResult(element);
       return {
         ...element,
-        result: result,
+        result: result ?? 0,
         tens: tens,
       };
     });
@@ -148,7 +152,7 @@ export default function Rounds() {
 
     try {
       const contestId = roundsState.currentContest.value;
-      if (roundsState.currentClass.value === TEAM_CLASSIFY) {
+      if (roundsState.prevCurrentClass.value === TEAM_CLASSIFY) {
         const results = await fetchData({
           action: 'getRoundTeamsResult',
           contest_id: contestId,
@@ -160,7 +164,7 @@ export default function Rounds() {
         setRoundsState({
           data: calcTeams(results.data.data, contesters.data.data),
         });
-      } else if (roundsState.currentClass.value === WOMEN_CLASSIFY) {
+      } else if (roundsState.prevCurrentClass.value === WOMEN_CLASSIFY) {
         const { status, data } = await fetchData({
           action: 'getRoundWomen',
           contest_id: contestId,
@@ -168,7 +172,7 @@ export default function Rounds() {
         setRoundsState({
           data: calcIndividual(data.data, WOMEN_CLASSIFY),
         });
-      } else if (roundsState.currentClass.value === MEN_CLASSIFY) {
+      } else if (roundsState.prevCurrentClass.value === MEN_CLASSIFY) {
         const { status, data } = await fetchData({
           action: 'getRoundMen',
           contest_id: contestId,
@@ -181,7 +185,10 @@ export default function Rounds() {
     } catch (error) {
       console.log(error);
     }
-    setRoundsState({ isLoading: false });
+    setRoundsState({
+      isLoading: false,
+      currentClass: roundsState.prevCurrentClass,
+    });
   };
 
   useEffect(() => {
@@ -217,7 +224,12 @@ export default function Rounds() {
         handleFetchData={handleFetchData}
       />
 
-      <div className={styles.searchBox}>
+      <div
+        className={styles.searchBox}
+        style={{
+          opacity: !roundsState.data?.length > 0 ? '0' : '1',
+        }}
+      >
         <Input
           type={'text'}
           value={roundsState.searchPhrase}
@@ -262,6 +274,7 @@ export default function Rounds() {
               <>
                 <span className={styles.navPlace}>Miejsce</span>
                 <span className={styles.navName}>Nazwa szkoły</span>
+                <span className={styles.empty}></span>
                 <span className={styles.navResult}>Punkty</span>
                 <span className={styles.navTens}>Dziesiątki</span>
                 <span className={styles.navLoss}>Strata</span>
@@ -271,6 +284,7 @@ export default function Rounds() {
                 <span className={styles.navPlace}>Miejsce</span>
                 <span className={styles.navName}>Imię i nazwisko</span>
                 <span className={styles.navName}>Drużyna</span>
+                <span className={styles.empty}></span>
                 <span className={styles.navResult}>Punkty</span>
                 <span className={styles.navTens}>Dziesiątki</span>
                 <span className={styles.navLoss}>Strata</span>
@@ -320,11 +334,13 @@ function SearchBar({
   const { season, classify, round } = useParams();
   const navigate = useNavigate();
   useEffect(() => {
+    const currentClass = classes.find((item) => item.value == classify);
+    const currentSeason = seasons?.find(
+      (item) => item.label === season?.replaceAll('-', '/'),
+    );
     setRoundsState({
-      currentSeason: seasons?.find(
-        (item) => item.label === season?.replaceAll('-', '/'),
-      ),
-      currentClass: classes.find((item) => item.value == classify),
+      currentSeason: currentSeason,
+      currentClass: currentClass,
     });
   }, []);
   useEffect(() => {
@@ -339,7 +355,7 @@ function SearchBar({
         <Select
           isSearchable={false}
           placeholder={'Kliknij by wybrać'}
-          options={seasons}
+          options={seasons ?? undefined}
           value={roundsState.currentSeason}
           onChange={(value) => {
             navigate(
@@ -351,7 +367,6 @@ function SearchBar({
               canBeRefetched: false,
               currentSeason: value,
               currentContest: null,
-              data: null,
             });
           }}
           width={'100%'}
@@ -383,7 +398,6 @@ function SearchBar({
             setRoundsState({
               canBeRefetched: false,
               currentContest: value,
-              data: null,
             });
           }}
           width={'100%'}
@@ -413,7 +427,7 @@ function SearchBar({
               value: MEN_CLASSIFY,
             },
           ]}
-          value={roundsState.currentClass}
+          value={roundsState.prevCurrentClass}
           onChange={(value) => {
             navigate(
               `/rundy/${roundsState.currentSeason?.label.replaceAll(
@@ -423,8 +437,7 @@ function SearchBar({
             );
             setRoundsState({
               canBeRefetched: false,
-              currentClass: value,
-              data: null,
+              prevCurrentClass: value,
             });
           }}
           width={'100%'}
@@ -439,7 +452,7 @@ function SearchBar({
         disabled={
           !roundsState.currentContest ||
           !roundsState.currentSeason ||
-          !roundsState.currentClass
+          !roundsState.prevCurrentClass
         }
         isLoading={roundsState.isLoading}
         action={handleFetchData}
@@ -499,7 +512,7 @@ function TeamResultElement({
           display: showList ? 'grid' : 'none',
         }}
       >
-        {members.map((member) => (
+        {members?.map((member) => (
           <NavLink
             to={`/zawodnik/${member.shooter_id}`}
             className={styles['shootersList--link']}

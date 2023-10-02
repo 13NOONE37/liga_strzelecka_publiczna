@@ -6,10 +6,12 @@
   align-items: center;
   padding: 1rem;
   gap: 1rem;
+  z-index: 2;
 }
 .searchBox {
   width: 900px;
   max-width: 100%;
+  transition: all 0.15s ease-out;
 }
 .searchInput {
   width: 300px;
