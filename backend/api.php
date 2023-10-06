@@ -15,8 +15,8 @@ require('endpoints/getUserName.php');
 $host = 'localhost'; //zmienić w zależności od ustawień bazy
 $username = 'root'; //zmienić w zależności od ustawień bazy
 $password = ''; //zmienić w zależności od ustawień bazy
-$database = 'liga_strzelecka'; //zmienić w zależności od ustawień bazy
-$url = 'http://localhost:5174'; //zmienić w zależności od serwera
+$database = ''; //zmienić w zależności od ustawień bazy
+$url = 'localhost'; //zmienić w zależności od serwera
 
 $conn = mysqli_connect($host, $username, $password, $database);
 mysqli_set_charset($conn, 'utf8');
@@ -79,4 +79,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     handleResponse(405, 'Nieprawidłowa metoda żądania');
 }
-// ?>
+?>

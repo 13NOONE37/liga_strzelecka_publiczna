@@ -82,7 +82,7 @@ function Links({ setShowAside }) {
         Rundy
       </NavLink>
       <NavLink
-        to={'https://sls.zsoitklodawa.pl/'}
+        to={'https://old.sls.zsoitklodawa.pl/'}
         target="_blank"
         onClick={handleHideAside}
         className={styles.link}
