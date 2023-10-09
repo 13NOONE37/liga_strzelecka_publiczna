@@ -108,7 +108,7 @@ function IndividualResult({ contesterState }) {
     <>
       {contesterState.data &&
         contesterState.data.map((element) => (
-          <IndividualResultElement {...element} />
+          <IndividualResultElement {...element} key={element.team_id} />
         ))}
     </>
   );
@@ -150,7 +150,7 @@ function IndividualResultElement({
   const today = new Date(date);
 
   return (
-    <div className={styles['resultContainer--row']} key={team_id}>
+    <div className={styles['resultContainer--row']}>
       <span className={styles.date}>
         {`${today.getDate()} ${
           MONTHS[today.getMonth()]

@@ -148,6 +148,8 @@ export default function Rounds() {
   };
 
   const handleFetchData = async () => {
+    //If we want places update on refresh button work we need to refetch contests
+
     setRoundsState({ isLoading: true, searchPhrase: '' });
 
     try {
@@ -161,6 +163,7 @@ export default function Rounds() {
           action: 'getRoundTeamsContesters',
           contest_id: contestId,
         });
+
         setRoundsState({
           data: calcTeams(results.data.data, contesters.data.data),
         });
@@ -503,7 +506,7 @@ function TeamResultElement({
           action={() => setShowList((prev) => !prev)}
         />
       </span>
-      <span className={styles.result}>{result}</span>
+      <span className={styles.result}>{result || '0'}</span>
       <span className={styles.tens}>{tens}</span>
       <span className={styles.loss}>{-loss}</span>
       <div
