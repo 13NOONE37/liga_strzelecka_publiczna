@@ -48,7 +48,13 @@ export default function Rounds() {
       if (b.school_id === third_place_team_id) return 1;
 
       // If none of the special cases, sort by 'result' in descending order
-      return b.result - a.result;
+      if (b.result !== a.result) {
+        //If result isn't same we sort by result
+        return b.result - a.result;
+      } else {
+        //If result is same we sort by ammount of tens
+        return b.tens - a.tens;
+      }
     });
   };
   const sortWomen = (data) => {
@@ -70,7 +76,13 @@ export default function Rounds() {
       if (b.shooter_id === woman_third_place_shooter_id) return 1;
 
       // If none of the special cases, sort by 'result' in descending order
-      return b.result - a.result;
+      if (b.result !== a.result) {
+        //If result isn't same we sort by result
+        return b.result - a.result;
+      } else {
+        //If result is same we sort by ammount of tens
+        return b.tens - a.tens;
+      }
     });
   };
   const sortMen = (data) => {
@@ -92,7 +104,13 @@ export default function Rounds() {
       if (b.shooter_id === man_third_place_shooter_id) return 1;
 
       // If none of the special cases, sort by 'result' in descending order
-      return b.result - a.result;
+      if (b.result !== a.result) {
+        //If result isn't same we sort by result
+        return b.result - a.result;
+      } else {
+        //If result is same we sort by ammount of tens
+        return b.tens - a.tens;
+      }
     });
   };
 

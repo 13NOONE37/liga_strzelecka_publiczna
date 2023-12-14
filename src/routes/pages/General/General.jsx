@@ -34,6 +34,18 @@ export default function General() {
     },
   );
 
+  const sortResult = (data) => {
+    data.sort((a, b) => {
+      if (b.result !== a.result) {
+        //If result isn't same we sort by result
+        return b.result - a.result;
+      } else {
+        //If result is same we sort by ammount of tens
+        return b.tens - a.tens;
+      }
+    });
+  };
+
   const calcLossAndPlace = (data) => {
     const losses = data.map((element, index) => {
       if (index === 0) {
@@ -53,6 +65,7 @@ export default function General() {
       loss: losses[index],
     }));
   };
+
   const handleFetchData = async () => {
     setGeneralState({ isLoading: true, searchPhrase: '' });
 
@@ -68,6 +81,8 @@ export default function General() {
           start_date: startDate,
           end_date: endDate,
         });
+
+        sortResult(data.data);
         setGeneralState({
           data: calcLossAndPlace(data.data),
         });
@@ -77,6 +92,8 @@ export default function General() {
           start_date: startDate,
           end_date: endDate,
         });
+
+        sortResult(data.data);
         setGeneralState({
           data: calcLossAndPlace(data.data),
         });
@@ -86,6 +103,7 @@ export default function General() {
           start_date: startDate,
           end_date: endDate,
         });
+        sortResult(data.data);
         setGeneralState({
           data: calcLossAndPlace(data.data),
         });
